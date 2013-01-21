@@ -45,7 +45,7 @@ def run_hp_cspec(test_context, test_case_scene, test_run_expect, factory_to_be_e
       after(:each){instance_name = strip_out_command_key("#{server_create_factory.node_name}")}
       context "#{test_case_scene}" do
         it "#{test_run_expect[:status]}" do
-          match_status({:stdout => test_run_expect[:status]})
+          match_status({:status => test_run_expect[:status]})
         end
       end
     end
@@ -56,7 +56,7 @@ def run_hp_cspec(test_context, test_case_scene, test_run_expect, factory_to_be_e
         let(:command) { prepare_list_srv_cmd_hp_lspec(srv_list_base_fact_hp)}
         after(:each){cmd_out = "#{cmd_stdout}"}
         it "should succeed" do
-          match_status({:stdout => "should succeed"})
+          match_status({:status => "should succeed"})
         end
       end
     end
@@ -69,7 +69,7 @@ def run_hp_cspec(test_context, test_case_scene, test_run_expect, factory_to_be_e
                         prepare_knife_command(srv_del_base_fact_hp) +
                         " -y" + " -N #{instance_name} -P"}
         it "should succeed" do
-          match_status({:stdout => "should succeed"})
+          match_status({:status => "should succeed"})
         end
       end
     end
@@ -86,7 +86,7 @@ def run_hp_lspec(test_context, test_case_scene, test_run_expect, factory_to_be_e
     after(:each) {puts "Test case completed!"}
     context "#{test_case_scene}" do
       it "#{test_run_expect[:status]}" do
-        match_status({:stdout => test_run_expect})
+        match_status({:status => test_run_expect})
       end
     end
   end
@@ -276,13 +276,21 @@ describe 'knife hp' do
   # Test Case: OP_KHP_15, DeleteMutipleServers
   run_hp_dspec("server delete", "command for multiple servers", expected_params, :hpServerDeleteMultiple, "delete_multiple")
 
-  expected_params[:status] = "should return empty list"
+  expected_params = {
+                     :status => "should return empty list",
+                     :stdout => nil,
+                     :stderr => nil
+                   }
 
   # Test Case: OP_KHP_13, ListServerEmpty
   run_hp_lspec("server list", "for no instances", expected_params, :hpServerListEmpty)
 
-  expected_params[:status] = "should fail"
 
+  expected_params = {
+                     :status => "should fail",
+                     :stdout => nil,
+                     :stderr => nil
+                   }
   # Test Case: OP_KHP_4, CreateServerWithWrongKeyCombination
   run_hp_cspec("server create", "with wrong key combination", expected_params, :hpServerCreateWrongKeyCombination, false, false)
 
